@@ -52,6 +52,7 @@ public class InventoryMenuService {
         System.out.println("Enter product price:");
         BigDecimal price = scanner.nextBigDecimal();
 
+
         System.out.println("Enter product quantity:");
         Long quantity = scanner.nextLong();
 
