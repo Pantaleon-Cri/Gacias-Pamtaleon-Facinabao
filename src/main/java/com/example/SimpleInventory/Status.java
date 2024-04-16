@@ -1,4 +1,4 @@
-package com.example.FacinabaoGacias;
+package com.example.SimpleInventory;
 
 public enum Status {
     AVAILABLE,

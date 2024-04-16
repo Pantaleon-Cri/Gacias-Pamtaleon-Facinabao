@@ -1,13 +1,15 @@
-package com.example.FacinabaoGacias;
+package com.example.SimpleInventory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.InputMismatchException;
 import java.math.BigDecimal;
 import java.util.Scanner;
 
 @Service
 public class InventoryMenuService {
+
 
     private final InventoryService inventoryService;
     private final Scanner scanner;
@@ -23,9 +25,18 @@ public class InventoryMenuService {
             System.out.println("\nInventory Management System");
             System.out.println("1. Add Item");
             System.out.println("2. Display Inventory");
-            System.out.println("3. Exit");
+            System.out.println("3. Display Product's Name");
+            System.out.println("4. Exit");
 
-            int choice = scanner.nextInt();
+            int choice;
+            try {
+                choice = scanner.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid choice. Please try again.");
+                scanner.nextLine();
+                continue;
+            }
+
             scanner.nextLine();
 
             switch (choice) {
@@ -36,7 +47,13 @@ public class InventoryMenuService {
                     inventoryService.getInventory().forEach(System.out::println);
                     break;
                 case 3:
+                    displayProductByName();
+                        break;
+
+                case 4:
                     System.out.println("Exiting program...");
+
+
                     System.exit(0);
                 default:
                     System.out.println("Invalid choice. Please try again.");
@@ -51,18 +68,35 @@ public class InventoryMenuService {
 
         System.out.println("Enter product price:");
         BigDecimal price = scanner.nextBigDecimal();
-
-
         System.out.println("Enter product quantity:");
         Long quantity = scanner.nextLong();
 
-        System.out.println("Enter product category:");
-        Category category = Category.valueOf(scanner.next());
+        Category category;
+        do {
+            System.out.print("Enter product category: ");
+            String userInput = scanner.next();
+            try {
+                category = Category.valueOf(userInput);
+            }catch (IllegalArgumentException e) {
+                System.out.println("Invalid Category. Try Again");
+                continue;
+            }
+            break;
+        } while (true);
 
-        System.out.println("Enter product status:");
-        Status status = Status.valueOf(scanner.next());
 
-        inventoryService.addItemToInventory(name, price, quantity, category, status);
 
+        inventoryService.addItemToInventory(name, price, quantity, category);
+
+    }
+    public void displayProductByName() {
+        System.out.println("Enter the product's name: ");
+        String name = scanner.nextLine();
+        Product product = inventoryService.getProductByName(name);
+        if(product != null) {
+            System.out.println(product);
+        } else {
+            System.out.println("Product not found");
+        }
     }
 }
